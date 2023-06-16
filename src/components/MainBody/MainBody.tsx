@@ -14,7 +14,9 @@ import { EthersProviderContext } from "src/Context/ProviderContext";
 const MainBody: React.FC = () => {
 
     const [modalOpen, setModalOpen] = React.useState(false)
-    const {address, connectProvider} = useContext(EthersProviderContext)
+    const {address, connectProvider, isConnected, balance} = useContext(EthersProviderContext)
+
+    console.log(address)
 
     return (
         <div className={clsx([css.root], "p-4")}>
@@ -24,10 +26,11 @@ const MainBody: React.FC = () => {
                     <text className="text-white">wbtc.garden</text>
                 </div>
                 {
-                    address == "" ?
+                    !isConnected ?
                     <PrimaryButton text="Connect wallet" onClick={() => connectProvider()} /> :
                     <div>
-                        <PrimaryButton className="" text={address} onClick={() => true}
+                        <PrimaryButton className="cursor-default" text={balance + " wBTC"} onClick={() => true} />
+                        <PrimaryButton className="cursor-default" text={address?.slice(0,5) + "...." + address?.slice(address.length-3)} onClick={() => true} />
                     </div>
 
                 }
@@ -37,9 +40,13 @@ const MainBody: React.FC = () => {
                 <SwapCard src="/BTC.svg" heading="Swap" />
                 <IconButton className={css["swap-button"]} src="/arrow.svg" width={36} height={36} onClick={() => false} alt="image" />
                 <SwapCard src="/wbtc.svg" heading="Recieve" />
-                <BottomCard heading="Recieve Address" body="Connect Wallet" />
-                <BottomCard heading="Fees" body="--" />
-                <PrimaryButton text="Connect wallet" onClick={() => setModalOpen(true)} />
+                <BottomCard heading="Recieve Address" body={address ? address?.slice(0,5) + "...." + address?.slice(address.length-3) : "Connect Wallet"} />
+                <BottomCard heading="Fees" body={isConnected ? "0" :"--"} />
+                {
+                    isConnected ?
+                    <PrimaryButton text="Initiate" onClick={() => true} /> :
+                    <PrimaryButton text="Connect wallet" onClick={() => setModalOpen(true)} />
+                }
                 <ConnectWallet open={modalOpen} setOpen={setModalOpen} />
             </div>
             

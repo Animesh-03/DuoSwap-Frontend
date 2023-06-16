@@ -11,15 +11,17 @@ interface WalletCardProps {
     height: number
     alt: string
     title: string
+    onSuccess: Function
 }
 
-export const WalletCard: React.FC<WalletCardProps> = ({src, width, height, alt, title}) => {
+export const WalletCard: React.FC<WalletCardProps> = ({src, width, height, alt, title, onSuccess}) => {
     const {connectProvider} = useContext(EthersProviderContext)
 
     return (
         <div className={clsx([css.root, "flex items-center justify-start w-full hover:cursor-pointer"])}
             onClick={async () => {
-                connectProvider()
+                await connectProvider()
+                onSuccess()
             }}
         >
             <Image className="mr-4" src={src} width={width} height={height} alt={alt} />

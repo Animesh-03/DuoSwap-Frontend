@@ -6,7 +6,7 @@ import clsx from "clsx";
 interface ButtonProps {
     text: string
     onClick: Function
-    className: string
+    className?: string
 }
 
 export const PrimaryButton: React.FC<ButtonProps> = ({text, onClick, className}) => {
