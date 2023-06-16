@@ -16,8 +16,6 @@ const MainBody: React.FC = () => {
     const [modalOpen, setModalOpen] = React.useState(false)
     const {address, connectProvider, isConnected, balance} = useContext(EthersProviderContext)
 
-    console.log(address)
-
     return (
         <div className={clsx([css.root], "p-4")}>
             <div className="flex justify-between">
