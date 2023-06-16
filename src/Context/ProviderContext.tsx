@@ -13,6 +13,7 @@ interface EthersProviderValue {
     address: string
     isConnected: boolean
     balance: string
+    logout: Function
 }
 
 export const EthersProviderContext = React.createContext({} as EthersProviderValue)
@@ -26,6 +27,9 @@ export const EthersProvider: React.FC<EthersProviderProps> = ({children}) => {
     React.useEffect(() => {
         //@ts-ignore
         provider = new ethers.BrowserProvider(window.ethereum)
+        let isc = localStorage.getItem("isConnected")
+        // setConnected(isc === "true" ? true : false)
+        if(isc === "true") connectProvider()
     },[])
 
     async function connectProvider() {
@@ -33,6 +37,13 @@ export const EthersProvider: React.FC<EthersProviderProps> = ({children}) => {
         setAddress(address[0] ?? undefined)
         setConnected(true)
         getBalance()
+        localStorage.setItem("isConnected", "true")
+    }
+
+    function logout() {
+        localStorage.setItem("isConnected", "false")
+        setConnected(false)
+        setAddress(undefined)
     }
 
     async function getBalance() {
@@ -43,7 +54,7 @@ export const EthersProvider: React.FC<EthersProviderProps> = ({children}) => {
 
     return (
         //@ts-ignore
-        <EthersProviderContext.Provider value={{provider: provider, connectProvider: connectProvider, address: address, isConnected: isConnected, balance: balance}}>
+        <EthersProviderContext.Provider value={{provider: provider, connectProvider: connectProvider, address: address, isConnected: isConnected, balance: balance, logout: logout}}>
             {children}
         </EthersProviderContext.Provider>
     )

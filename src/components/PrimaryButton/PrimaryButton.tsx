@@ -7,11 +7,18 @@ interface ButtonProps {
     text: string
     onClick: Function
     className?: string
+    variant?: string
 }
 
-export const PrimaryButton: React.FC<ButtonProps> = ({text, onClick, className}) => {
+const variants = {
+    "primary": css.root,
+    "light": css.light
+}
+
+export const PrimaryButton: React.FC<ButtonProps> = ({text, onClick, className, variant = "primary"}) => {
     return (
-        <button className={clsx([css.root], 'text-black', className)} onClick={() => onClick()}>
+        //@ts-ignore
+        <button className={clsx([css.root, variants[variant], 'text-black', className])} onClick={() => onClick()}>
             {text}
         </button>
     )

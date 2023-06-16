@@ -17,14 +17,24 @@ interface TransactionCardProps {
 export const TransactionCard: React.FC<TransactionCardProps> = ({amount, isComplete: is, status: st, address, timeRemaining, swappingBTC = true}) => {
     const [isComplete, setIsComplete] = React.useState(is)
     const [status, setStatus] = React.useState(st)
+    const [shouldClaim, setShouldClaim] = React.useState(false)
+    const [rt, setRT] = React.useState(timeRemaining)
 
 
     React.useEffect(() => {
         if(!isComplete) {
             setTimeout(() => {
-                setIsComplete(true)
+                setIsComplete(false)
                 setStatus("Successful!")
+                setShouldClaim(true)
+                
+                setInterval(() => {
+                    if(rt ?? 0 > 0) setRT(rt ?? 1 - 1)
+                }, 1000)
             }, timeRemaining)
+        }
+        else {
+            setShouldClaim(true)
         }
     },[])
 
@@ -54,12 +64,22 @@ export const TransactionCard: React.FC<TransactionCardProps> = ({amount, isCompl
             </div>
             <div>
                 {
-                    isComplete ? 
-                    <PrimaryButton text="Claim wBTC" onClick={() => true} /> :
+                    isComplete && !shouldClaim ? 
                     <div className="flex flex-col items-end">
-                        <p><span className="text-light-grey">Received at </span>{address ? (address?.slice(0, 4) + "...." + address!.slice(address?.length ?? 10 -4)) : "Loading..."}</p>
+                        <p><span className="text-light-grey">Received at </span>{address ? (address?.slice(0, 6) + "...." + address!.slice((address?.length ?? 10) -4)) : "Loading..."}</p>
+                        <p>View Transaction</p>
+                    </div> :
+                    shouldClaim ?
+                    <PrimaryButton text="Claim wBTC" onClick={() => {
+                        setShouldClaim(false)
+                        setIsComplete(true)
+                    }} /> :                    
+                    <div className="flex flex-col items-end w-full">
+                        <span className="flex"><span className="text-light-grey mr-1">Send to </span><span className="mr-1">{address ? (address?.slice(0, 6) + "...." + address?.slice((address?.length ?? 10) -4)) : "Loading..."}</span> <Image className="cursor-pointer" src="/copy.svg" width={13} height={16} alt="copy" onClick={() => address && navigator.clipboard.writeText(address)} /></span>
                         <p>View Transaction</p>
                     </div>
+                    
+                    
                 }
             </div>
         </div>

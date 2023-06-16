@@ -15,7 +15,7 @@ import { TransactionsContext } from "src/Context/TransactionsContext";
 const MainBody: React.FC = () => {
 
     const [modalOpen, setModalOpen] = React.useState(false)
-    const {address, connectProvider, isConnected, balance} = useContext(EthersProviderContext)
+    const {address, connectProvider, isConnected, balance, logout} = useContext(EthersProviderContext)
     const [swappingBTC, setSwappingBTC] = React.useState(true)
     const [swapAmount, setSwapAmount] = React.useState(0)
 
@@ -31,9 +31,10 @@ const MainBody: React.FC = () => {
                 {
                     !isConnected ?
                     <PrimaryButton text="Connect wallet" onClick={() => connectProvider()} /> :
-                    <div>
-                        <PrimaryButton className="cursor-default mr-2" text={balance + " wBTC"} onClick={() => true} />
-                        <PrimaryButton className="cursor-default" text={address?.slice(0,5) + "...." + address?.slice(address.length-3)} onClick={() => true} />
+                    <div className="flex">
+                        <PrimaryButton variant="light" className="cursor-default mr-2" text={balance + " wBTC"} onClick={() => true} />
+                        <PrimaryButton className="cursor-default mr-2" text={address?.slice(0,6) + "...." + address?.slice(address.length-4)} onClick={() => true} />
+                        <Image className="cursor-pointer" src={"/logout.svg"} width={16} height={16} alt="logout" onClick={() => logout()} />
                     </div>
 
                 }
@@ -53,12 +54,12 @@ const MainBody: React.FC = () => {
                 }
                 <IconButton className={css["swap-button"]} src="/arrow.svg" width={36} height={36} onClick={() => setSwappingBTC(!swappingBTC)} alt="image" />
                 
-                <BottomCard heading="Recieve Address" body={address ? address?.slice(0,5) + "...." + address?.slice(address.length-3) : "Connect Wallet"} />
-                <BottomCard heading="Fees" body={isConnected ? (swapAmount*0.0001).toString() :"--"} />
+                <BottomCard heading="Recieve Address" body={address ? address?.slice(0,6) + "...." + address?.slice(address.length-4) : "Connect Wallet"} />
+                <BottomCard heading="Fees" body={isConnected ? (swapAmount*0.001).toString() :"--"} />
                 {
                     isConnected ?
-                    <PrimaryButton text="Initiate" onClick={() => setTransactions([...transactions, {
-                        amount: swapAmount*0.0001,
+                    <PrimaryButton text="Initiate" onClick={() => swapAmount > 0 && setTransactions([...transactions, {
+                        amount: swapAmount,
                         status: "35:12:25 Remaining",
                         isComplete: false,
                         address: "0xjfhljFfbbgalab",
