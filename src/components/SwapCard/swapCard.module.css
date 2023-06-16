@@ -1,0 +1,8 @@
+.root {
+    width: 400px;
+    height: 125px;
+    border-radius: 15px;
+    background-color: #FFFFFF;
+    margin: 0.75rem;
+    padding: 1rem;
+}

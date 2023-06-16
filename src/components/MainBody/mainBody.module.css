@@ -1,0 +1,10 @@
+.root {
+    min-height: 70vh;
+    background-color: #00501E;
+}
+
+.swap-button {
+    position: absolute;
+    left: 49vw;
+    top: 185px;
+}
