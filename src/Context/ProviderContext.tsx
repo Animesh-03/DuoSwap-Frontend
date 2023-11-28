@@ -47,9 +47,11 @@ export const EthersProvider: React.FC<EthersProviderProps> = ({children}) => {
     }
 
     async function getBalance() {
-        const contract = new ethers.Contract("0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",  erc20abi, provider)
-        const balance = (await contract.balanceOf((await provider.getSigner()).address)).toString();
-        setBalance(balance)
+        // const contract = new ethers.Contract("0x1b44F3514812d835EB1BDB0acB33d3fA3351Ee43",  erc20abi, provider)
+        const signer = await provider.getSigner();
+        console.log(await provider.getBalance(signer.address))
+        const balance = (await provider.getBalance(signer.address))
+        setBalance( balance > 1e18 ? balance.toString()[0] + "." + balance.toString().substring(2,3) : "0." + balance.toString().substring(0,3))
     }
 
     return (
@@ -59,4 +61,3 @@ export const EthersProvider: React.FC<EthersProviderProps> = ({children}) => {
         </EthersProviderContext.Provider>
     )
 }
-

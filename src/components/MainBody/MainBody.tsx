@@ -10,29 +10,27 @@ import { IconButton } from "../IconButton/IconButtons";
 import { BottomCard } from "../BottomCard/BottomCard";
 import { ConnectWallet } from "../ConnectWallet/ConnectWallet";
 import { EthersProviderContext } from "src/Context/ProviderContext";
-import { TransactionsContext } from "src/Context/TransactionsContext";
+import { swapETHToUSDC, swapUSDCToETH } from "src/lib/utils/swap";
 
 const MainBody: React.FC = () => {
 
     const [modalOpen, setModalOpen] = React.useState(false)
     const {address, connectProvider, isConnected, balance, logout} = useContext(EthersProviderContext)
-    const [swappingBTC, setSwappingBTC] = React.useState(true)
+    const [swappingETH, setSwappingBTC] = React.useState(true)
     const [swapAmount, setSwapAmount] = React.useState(0)
-
-    const {transactions, setTransactions} = useContext(TransactionsContext)
 
     return (
         <div className={clsx([css.root], "p-4")}>
             <div className="flex justify-between">
                 <div className="flex items-center">
-                    <Image className="mr-4" src={"/btc.svg"} width={33} height={33} alt="BTC_IMG" />
-                    <text className="text-white">wbtc.garden</text>
+                    <Image className="mr-4" src={"/ether.png"} width={33} height={33} alt="BTC_IMG" />
+                    <text className="text-white text-bold text-2xl tracking-wide">DuoSwap</text>
                 </div>
                 {
                     !isConnected ?
                     <PrimaryButton text="Connect wallet" onClick={() => connectProvider()} /> :
                     <div className="flex">
-                        <PrimaryButton variant="light" className="cursor-default mr-2" text={balance + " wBTC"} onClick={() => true} />
+                        <PrimaryButton variant="light" className="cursor-default mr-2 text-white" text={balance + " eth"} onClick={() => true} />
                         <PrimaryButton className="cursor-default mr-2" text={address?.slice(0,6) + "...." + address?.slice(address.length-4)} onClick={() => true} />
                         <Image className="cursor-pointer" src={"/logout.svg"} width={16} height={16} alt="logout" onClick={() => logout()} />
                     </div>
@@ -42,35 +40,27 @@ const MainBody: React.FC = () => {
 
             <div className="m-auto flex flex-col items-center justify-between">
                 {
-                    swappingBTC ? 
+                    swappingETH ? 
                     <div>
-                        <SwapCard setAmount={setSwapAmount} src="/BTC.svg" heading="Swap" />
-                        <SwapCard amount={swapAmount} disabled={true} src="/wbtc.svg" heading="Recieve" />
+                        <SwapCard setAmount={setSwapAmount} src="/ether.png" heading="Swap ETH" />
+                        <SwapCard isUSDC amount={swapAmount} disabled={true} src="/usdc.png" heading="Recieve USDC" />
                     </div> :
                     <div>
-                        <SwapCard setAmount={setSwapAmount} src="/wbtc.svg" heading="Swap" />
-                        <SwapCard amount={swapAmount} disabled={true} src="/BTC.svg" heading="Recieve" />
+                        <SwapCard isUSDC setAmount={setSwapAmount} src="/usdc.png" heading="Swap USDC" />
+                        <SwapCard amount={swapAmount} disabled={true} src="/ether.png" heading="Recieve ETH" />
                     </div>
                 }
-                <IconButton className={css["swap-button"]} src="/arrow.svg" width={36} height={36} onClick={() => setSwappingBTC(!swappingBTC)} alt="image" />
+                <IconButton className={css["swap-button"]} src="/arrow.svg" width={36} height={36} onClick={() => setSwappingBTC(!swappingETH)} alt="image" />
                 
-                <BottomCard heading="Recieve Address" body={address ? address?.slice(0,6) + "...." + address?.slice(address.length-4) : "Connect Wallet"} />
-                <BottomCard heading="Fees" body={isConnected ? (swapAmount*0.001).toString() :"--"} />
+                <BottomCard heading="Recieve Address" body={address ? address?.slice(0,6) + "...." + address?.slice(address.length-4) : "0x00...0000"} />
                 {
                     isConnected ?
-                    <PrimaryButton text="Initiate" onClick={() => swapAmount > 0 && setTransactions([...transactions, {
-                        amount: swapAmount,
-                        status: "35:12:25 Remaining",
-                        isComplete: false,
-                        address: "0xjfhljFfbbgalab",
-                        timeRemaining: 5*1000,
-                        swappingBTC: swappingBTC
-                    }] )} /> : 
+                    <PrimaryButton text="Initiate" onClick={() => swappingETH ? swapETHToUSDC(swapAmount) : swapUSDCToETH(swapAmount)} /> : 
                     <PrimaryButton text="Connect wallet" onClick={() => setModalOpen(true)} />
                 }
                 <ConnectWallet open={modalOpen} setOpen={setModalOpen} />
             </div>
-            
+            <></>
         </div>
     )
 }
